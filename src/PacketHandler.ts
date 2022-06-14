@@ -6,9 +6,18 @@ import ChatPacketListener from "./default/ChatPacketListener";
 
 export default class PacketHandler {
     private readonly packetMap = new Map<string, PacketListener<any>>()
+    private readonly defaultOptions = {
+        registerDefaultPacket: true,
+        debug: false
+    }
 
-    constructor(registerDefaultPacket = true) {
-        if (registerDefaultPacket) {
+    private readonly debug: boolean
+
+    constructor(options = {}) {
+        const newOptions = {...this.defaultOptions, ...options}
+
+        this.debug = newOptions.debug
+        if (newOptions.registerDefaultPacket) {
             this.registerDefaultPackets()
         }
     }
@@ -44,12 +53,16 @@ export default class PacketHandler {
     }
 
     registerPacket(listener: PacketListener<any>) {
-        console.log(`register packet ${listener.getType()}`)
+        if (this.debug) {
+            console.log(`register packet ${listener.getType()}`)
+        }
         this.packetMap.set(listener.getType(), listener)
     }
 
     unregisterPacket(type: string): boolean {
-        console.log(`unregister packet ${type}`)
+        if (this.debug) {
+            console.log(`unregister packet ${type}`)
+        }
         return this.packetMap.delete(type)
     }
 
