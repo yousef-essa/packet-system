@@ -1,4 +1,4 @@
-import Connection from "../connection/Connection";
+import Connection from './connection/Connection';
 import PacketHandler from "./PacketHandler";
 import Packet from "./Packet";
 

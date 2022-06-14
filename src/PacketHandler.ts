@@ -1,7 +1,7 @@
 import PacketListener from "./PacketListener";
 import Packet from "./Packet";
 import PacketContext from "./PacketContext";
-import Connection from "../connection/Connection";
+import Connection from "./connection/Connection";
 import ChatPacketListener from "./default/ChatPacketListener";
 
 export default class PacketHandler {

@@ -1,5 +1,5 @@
 import PacketListener from "../PacketListener";
-import ChatPacket, {SimpleChatPacket} from "./ChatPacket";
+import ChatPacket, {SimpleChatPacket} from "../default/ChatPacket";
 import PacketContext from "../PacketContext";
 import PacketUtil from "../PacketUtil";
 
