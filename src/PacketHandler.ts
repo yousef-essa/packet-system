@@ -7,7 +7,13 @@ import ChatPacketListener from "./default/ChatPacketListener";
 export default class PacketHandler {
     private readonly packetMap = new Map<string, PacketListener<any>>()
 
-    constructor() {
+    constructor(registerDefaultPacket = true) {
+        if (registerDefaultPacket) {
+            this.registerDefaultPackets()
+        }
+    }
+
+    registerDefaultPackets() {
         this.registerPacket(new ChatPacketListener())
     }
 
