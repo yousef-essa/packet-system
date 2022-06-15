@@ -1,5 +1,5 @@
 # packet-system
-This is a simple abstract packet system that I created to experiment around with JS networking.
+This is a simple, and easy to use packet system that I created to experiment around with JS networking.
 
 The samples can be found [here](https://github.com/yousef-essa/packet-system-sample).  
 The documentation can be found [here](https://github.com/yousef-essa/packet-system/wiki).
