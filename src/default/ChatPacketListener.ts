@@ -5,7 +5,7 @@ import PacketUtil from "../PacketUtil";
 
 export default class ChatPacketListener extends PacketListener<ChatPacket> {
     constructor() {
-        super(SimpleChatPacket.name)
+        super(ChatPacket.PACKET_NAME)
     }
 
     onSerialize(packet: ChatPacket): string {
