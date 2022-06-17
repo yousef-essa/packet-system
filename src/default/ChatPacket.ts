@@ -22,4 +22,8 @@ export class SimpleChatPacket extends ChatPacket {
     constructor(message: string) {
         super(message);
     }
+
+    serialize(): string {
+        return this.getMessage();
+    }
 }

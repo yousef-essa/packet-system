@@ -1,11 +1,11 @@
-import PacketListener from "./PacketListener";
+import PacketAdapter from "./PacketAdapter";
 import Packet from "./Packet";
 import PacketContext from "./PacketContext";
 import Connection from "./connection/Connection";
-import ChatPacketListener from "./default/ChatPacketListener";
+import ChatPacketAdapter from "./default/ChatPacketAdapter";
 
 export default class PacketHandler {
-    private readonly packetMap = new Map<string, PacketListener<any>>()
+    private readonly packetMap = new Map<string, PacketAdapter<any>>()
     private readonly defaultOptions = {
         registerDefaultPacket: true,
         debug: false
@@ -23,40 +23,39 @@ export default class PacketHandler {
     }
 
     registerDefaultPackets() {
-        this.registerPacket(new ChatPacketListener())
+        this.registerPacket(new ChatPacketAdapter())
     }
 
     onReceive(packetType: string, from: Connection, data: string) {
-        const listener = this.getListener(packetType)
+        const adapter = this.getAdapter(packetType)
 
         // if there's no packet that is associated with a
-        // listener, don't continue
-        if (listener == null) {
+        // adapter, don't continue
+        if (adapter == null) {
             return
         }
 
-        const packet = listener.onDeserialize(data);
-        listener.onReceive(new PacketContext<any>(this, packet, from))
+        const packet = adapter.onDeserialize(data);
+        adapter.onReceive(new PacketContext<any>(this, packet, from))
     }
 
     send(packet: Packet, to: Connection) {
-        const listener = this.getListener(packet.type())
+        const adapter = this.getAdapter(packet.type())
 
         // if there's no packet that is associated with a
-        // listener, don't continue
-        if (listener == null) {
+        // adapter, don't continue
+        if (adapter == null) {
             return
         }
 
-        const input = listener.onSerialize(packet)
-        to.send(`[${packet.type()}] ${input}`)
+        to.send(`[${packet.type()}] ${packet.toString()}`)
     }
 
-    registerPacket(listener: PacketListener<any>) {
+    registerPacket(adapter: PacketAdapter<any>) {
         if (this.debug) {
-            console.log(`register packet ${listener.getType()}`)
+            console.log(`register packet ${adapter.getType()}`)
         }
-        this.packetMap.set(listener.getType(), listener)
+        this.packetMap.set(adapter.getType(), adapter)
     }
 
     unregisterPacket(type: string): boolean {
@@ -66,7 +65,7 @@ export default class PacketHandler {
         return this.packetMap.delete(type)
     }
 
-    getListener(packet: string) {
+    getAdapter(packet: string) {
         return this.packetMap.get(packet)
     }
 }

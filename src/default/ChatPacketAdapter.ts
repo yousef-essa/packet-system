@@ -1,15 +1,11 @@
-import PacketListener from "../PacketListener";
+import PacketAdapter from "../PacketAdapter";
 import ChatPacket, {SimpleChatPacket} from "../default/ChatPacket";
 import PacketContext from "../PacketContext";
 import PacketUtil from "../PacketUtil";
 
-export default class ChatPacketListener extends PacketListener<ChatPacket> {
+export default class ChatPacketAdapter extends PacketAdapter<ChatPacket> {
     constructor() {
         super(ChatPacket.PACKET_NAME)
-    }
-
-    onSerialize(packet: ChatPacket): string {
-        return packet.getMessage()
     }
 
     onReceive(context: PacketContext<ChatPacket>) {
