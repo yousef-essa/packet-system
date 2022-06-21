@@ -11,7 +11,15 @@ export default abstract class PacketAdapter<P extends Packet> {
     abstract onDeserialize(serializedData: string): P
     abstract onReceive(context: PacketContext<P>): void
 
+    abstract receiptStatus(): PacketReceiptStatus
+
     getType() {
         return this.type
     }
+}
+
+export enum PacketReceiptStatus {
+    BOTH,
+    SERVER,
+    CLIENT
 }

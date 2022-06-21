@@ -1,4 +1,4 @@
-import PacketAdapter from "./PacketAdapter";
+import PacketAdapter, {PacketReceiptStatus} from "./PacketAdapter";
 import Packet from "./Packet";
 import PacketContext from "./PacketContext";
 import Connection from "./connection/Connection";
@@ -8,15 +8,18 @@ export default class PacketHandler {
     private readonly packetMap = new Map<string, PacketAdapter<any>>()
     private readonly defaultOptions = {
         registerDefaultPacket: true,
-        debug: false
+        debug: false,
+        isServer: false
     }
 
     private readonly debug: boolean
+    private readonly receiptStatus: PacketReceiptStatus
 
     constructor(options = {}) {
         const newOptions = {...this.defaultOptions, ...options}
 
         this.debug = newOptions.debug
+        this.receiptStatus = newOptions.isServer ? PacketReceiptStatus.SERVER : PacketReceiptStatus.CLIENT
         if (newOptions.registerDefaultPacket) {
             this.registerDefaultPackets()
         }
@@ -29,9 +32,14 @@ export default class PacketHandler {
     onReceive(packetType: string, from: Connection, data: string) {
         const adapter = this.getAdapter(packetType)
 
-        // if there's no packet that is associated with a
-        // adapter, don't continue
+        // if there's no packet that is associated with
+        // an adapter, don't continue
         if (adapter == null) {
+            return
+        }
+
+        const receiptStatus = adapter.receiptStatus();
+        if (receiptStatus != PacketReceiptStatus.BOTH && this.receiptStatus != receiptStatus) {
             return
         }
 

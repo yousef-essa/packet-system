@@ -1,4 +1,4 @@
-import PacketAdapter from "../PacketAdapter";
+import PacketAdapter, {PacketReceiptStatus} from "../PacketAdapter";
 import ChatPacket, {SimpleChatPacket} from "../default/ChatPacket";
 import PacketContext from "../PacketContext";
 import PacketUtil from "../PacketUtil";
@@ -17,5 +17,9 @@ export default class ChatPacketAdapter extends PacketAdapter<ChatPacket> {
 
     onDeserialize(message: string): ChatPacket {
         return new SimpleChatPacket(message);
+    }
+
+    receiptStatus(): PacketReceiptStatus {
+        return PacketReceiptStatus.BOTH;
     }
 }
