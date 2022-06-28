@@ -25,10 +25,23 @@ export default class PacketHandler {
         }
     }
 
+    /**
+     * Registers the default packets; shall be overwritten if preferred
+     */
     registerDefaultPackets() {
         this.registerPacket(new ChatPacketAdapter())
     }
 
+    /**
+     * Attempts to find the appropriate {@link PacketAdapter},
+     * and if it does, and the packet receipt status
+     * is appropriate, the respective adapter
+     * onReceive method will be invoked.
+     *
+     * @param packetType the packet type that was sent.
+     * @param from the sender connection.
+     * @param data the message received.
+     */
     onReceive(packetType: string, from: Connection, data: string) {
         const adapter = this.getAdapter(packetType)
 
@@ -39,14 +52,32 @@ export default class PacketHandler {
         }
 
         const receiptStatus = adapter.receiptStatus();
+        // if the receipt does not match, do not continue
         if (receiptStatus != PacketReceiptStatus.BOTH && this.receiptStatus != receiptStatus) {
             return
         }
 
-        const packet = adapter.onDeserialize(data);
-        adapter.onReceive(new PacketContext<any>(this, packet, from))
+        const deserializedPacket = adapter.onDeserialize(data);
+        const packetContext = new PacketContext<any>(this, deserializedPacket, from);
+
+        adapter.onReceive(packetContext)
     }
 
+    /**
+     * Sends a message to the target with the given packet.
+     *
+     * @example
+     * // the packet that be sent
+     * const helloPacket = new ChatPacket("Hello!")
+     *
+     * // the target that will receive the packet
+     * const target = ...
+     *
+     * this.send(helloPacket, target)
+     *
+     * @param packet the packet that will be sent.
+     * @param to the target that will receive the packet.
+     */
     send(packet: Packet, to: Connection) {
         const adapter = this.getAdapter(packet.type())
 
@@ -59,6 +90,13 @@ export default class PacketHandler {
         to.send(`[${packet.type()}] ${packet.toString()}`)
     }
 
+    /**
+     * Registers the packet's adapter by binding the
+     * {@link PacketAdapter#getType} with the given adapter
+     * in a map.
+     *
+     * @param adapter the adapter to register.
+     */
     registerPacket(adapter: PacketAdapter<any>) {
         if (this.debug) {
             console.log(`register packet ${adapter.getType()}`)
@@ -66,11 +104,19 @@ export default class PacketHandler {
         this.packetMap.set(adapter.getType(), adapter)
     }
 
+    /**
+     * Unregisters the packet's adapter by removing
+     * the value that is associated with the packet's
+     * type key; if applicable, of course.
+     *
+     * @param type the packet name to unregister.
+     */
     unregisterPacket(type: string): boolean {
-        if (this.debug) {
+        const deleted = this.packetMap.delete(type);
+        if (this.debug && deleted) {
             console.log(`unregister packet ${type}`)
         }
-        return this.packetMap.delete(type)
+        return deleted
     }
 
     getAdapter(packet: string) {

@@ -13,14 +13,41 @@ export default class PacketContext<P extends Packet> {
         this.from = from
     }
 
+    /**
+     * This can be used, for example, send reply packet to the sender.
+     *
+     * @example
+     * // the sender
+     * const sender = this.getFrom()
+     * const replyPacket = new ChatPacket("Pong!")
+     *
+     * // sending a reply message back to the sender
+     * this.getPacketHandler().send(replyPacket, sender)
+     *
+     * // convenience method
+     * PacketUtil.reply(context, replyPacket)
+     *
+     * @return an instance of PacketHandler handler.
+     */
     getPacketHandler(): PacketHandler {
         return this.packetHandler
     }
 
+    /**
+     * The packet that was sent from the sender.
+     *
+     * @return the packet the sender sent.
+     */
     getPacket(): P {
         return this.packet
     }
 
+    /**
+     * This can be used, combined with {@link PacketHandler}
+     * to send a reply message. Also see {@link PacketUtil#reply}
+     *
+     * @return the sender connection.
+     */
     getFrom(): Connection {
         return this.from
     }
