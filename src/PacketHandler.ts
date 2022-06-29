@@ -28,7 +28,7 @@ export default class PacketHandler {
     /**
      * Registers the default packets; shall be overwritten if preferred
      */
-    registerDefaultPackets() {
+    protected registerDefaultPackets() {
         this.registerPacket(new ChatPacketAdapter())
     }
 
@@ -42,7 +42,7 @@ export default class PacketHandler {
      * @param from the sender connection.
      * @param data the message received.
      */
-    onReceive(packetType: string, from: Connection, data: string) {
+    protected onReceive(packetType: string, from: Connection, data: string) {
         const adapter = this.getAdapter(packetType)
 
         // if there's no packet that is associated with
@@ -119,7 +119,7 @@ export default class PacketHandler {
         return deleted
     }
 
-    getAdapter(packet: string) {
+    protected getAdapter(packet: string) {
         return this.packetMap.get(packet)
     }
 }
