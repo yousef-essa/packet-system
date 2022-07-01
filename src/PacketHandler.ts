@@ -98,6 +98,10 @@ export default class PacketHandler {
      * @param adapter the adapter to register.
      */
     registerPacket(adapter: PacketAdapter<any>) {
+        if (adapter == null) {
+            return
+        }
+
         if (this.debug) {
             console.log(`register packet ${adapter.getType()}`)
         }
